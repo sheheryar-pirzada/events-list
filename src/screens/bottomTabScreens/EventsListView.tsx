@@ -1,18 +1,10 @@
 import React, {useContext, useState} from 'react';
-import {
-  AddIcon,
-  Box,
-  Button,
-  HStack,
-  ScrollView,
-  Select,
-  Text,
-  VStack,
-} from 'native-base';
+import {AddIcon, Box, Button, HStack, Select} from 'native-base';
 import Header from '../../components/Header';
 import {routes} from '../../navigation/utils';
 import {EventsContext} from '../../common/userContext';
 import EventsList from '../../components/EventsList';
+import {combineDateAndStartTime} from '../../common/utils';
 
 const EventsListView = ({navigation}) => {
   const {events} = useContext(EventsContext);
@@ -51,13 +43,21 @@ const EventsListView = ({navigation}) => {
         <Button
           w="48%"
           startIcon={<AddIcon size="4" />}
-          onPress={() => navigation.navigate(routes.createEvent)}>
+          onPress={() =>
+            navigation.navigate(routes.createEvent, {eventToEdit: null})
+          }>
           Create Event
         </Button>
       </HStack>
       <EventsList
         filter={filter}
-        events={events.filter(event => filter === '' || event.type === filter)}
+        events={events
+          .filter(event => filter === '' || event.type === filter)
+          .sort(
+            (a, b) =>
+              combineDateAndStartTime(a.date, a.startTime).getTime() -
+              combineDateAndStartTime(b.date, b.startTime).getTime(),
+          )}
       />
     </Box>
   );

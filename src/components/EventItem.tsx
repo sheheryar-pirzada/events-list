@@ -11,8 +11,17 @@ import {
 import {formatDate, parseTime} from '../common/utils';
 import {Swipeable} from 'react-native-gesture-handler';
 import {setToStorage} from '../common/storage';
+import {useNavigation} from '@react-navigation/native';
+import {routes} from '../navigation/utils';
 
-const EventItem = ({item: event, index, allEvents, setEvents}) => {
+const EventItem = ({
+  item: event,
+  index,
+  allEvents,
+  setEvents,
+  filterApplied,
+}) => {
+  const navigation = useNavigation();
   const {name, description, startTime, endTime, date} = event;
   const row = [];
   let prevOpenedRow;
@@ -41,6 +50,11 @@ const EventItem = ({item: event, index, allEvents, setEvents}) => {
     closeRow(index);
   };
 
+  const handleEditEventClick = () => {
+    closeRow(index);
+    navigation.navigate(routes.createEvent, {eventToEdit: event});
+  };
+
   const rightSwipeActions = () => {
     return [
       <Pressable
@@ -63,7 +77,8 @@ const EventItem = ({item: event, index, allEvents, setEvents}) => {
         bg="gray.700"
         borderRadius={12}
         alignItems="center"
-        justifyContent="center">
+        justifyContent="center"
+        onPress={() => handleEditEventClick()}>
         <Text fontWeight="bold" color="gray.300">
           Edit
         </Text>
@@ -89,19 +104,26 @@ const EventItem = ({item: event, index, allEvents, setEvents}) => {
       renderRightActions={rightSwipeActions}>
       <Box bg="dark.50" p={4} minH={100} maxH={200} borderRadius={12}>
         <VStack space={1}>
-          <HStack>
+          <HStack justifyContent="space-between">
             <Heading fontSize="lg" color="gray.300">
               {name}
             </Heading>
+            {!filterApplied && (
+              <Box bg="gray.600" px={2} borderRadius={8}>
+                <Text color="gray.300">{`#${event.type}`}</Text>
+              </Box>
+            )}
           </HStack>
           <Heading fontSize="sm" fontWeight="semibold" color="gray.400">
             {getDateTimeText(date, startTime, endTime)}
           </Heading>
-          <Box mt={2}>
-            <Text fontSize="md" color="gray.500">
-              {description}
-            </Text>
-          </Box>
+          {!!description && (
+            <Box mt={2}>
+              <Text fontSize="md" color="gray.500">
+                {description}
+              </Text>
+            </Box>
+          )}
         </VStack>
       </Box>
     </Swipeable>

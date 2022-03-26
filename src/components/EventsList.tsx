@@ -16,6 +16,7 @@ const EventsList = ({events, filter}) => {
           setEvents={setEvents}
           index={index}
           item={item}
+          filterApplied={filter !== ""}
         />
       )}
       showsHorizontalScrollIndicator={false}

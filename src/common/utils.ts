@@ -17,3 +17,7 @@ export const formatDate = date => {
     date.getFullYear(),
   ].join('/');
 };
+
+export const combineDateAndStartTime = (date, startTime) => {
+  return new Date(`${date.split('T')[0]}T${startTime.split('T')[1]}`);
+};
