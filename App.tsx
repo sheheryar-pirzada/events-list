@@ -7,6 +7,7 @@ import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {theme} from './src/common/theme';
 import {getFromStorage} from './src/common/storage';
 import {EventsContext} from './src/common/userContext';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
 
 const App: () => ReactNode = () => {
   const [events, setEvents] = useState<any>([]);
@@ -24,11 +25,13 @@ const App: () => ReactNode = () => {
   return (
     <NativeBaseProvider theme={theme}>
       <EventsContext.Provider value={{events, setEvents}}>
-        <NavigationContainer theme={DarkTheme}>
-          <SafeAreaProvider>
-            <RootStack />
-          </SafeAreaProvider>
-        </NavigationContainer>
+        <GestureHandlerRootView style={{flex: 1}}>
+          <NavigationContainer theme={DarkTheme}>
+            <SafeAreaProvider>
+              <RootStack />
+            </SafeAreaProvider>
+          </NavigationContainer>
+        </GestureHandlerRootView>
       </EventsContext.Provider>
     </NativeBaseProvider>
   );

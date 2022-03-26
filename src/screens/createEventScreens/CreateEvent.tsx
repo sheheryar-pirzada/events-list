@@ -13,7 +13,7 @@ import Header from '../../components/Header';
 import {setToStorage} from '../../common/storage';
 import {routes} from '../../navigation/utils';
 import {EventsContext} from '../../common/userContext';
-import { parseDate, parseTime } from '../../common/utils';
+import {parseDate, parseTime} from '../../common/utils';
 
 interface IDatePickerContext {
   open: boolean;
@@ -29,7 +29,6 @@ const CreateEvent = ({navigation}) => {
   const [date, setDate] = useState({selected: new Date(), show: false});
   const [startTime, setStartTime] = useState<null | Date>(null);
   const [endTime, setEndTime] = useState<null | Date>(null);
-  const [attachment, setAttachment] = useState<string>('');
   const [datePickerContext, setDatePickerContext] =
     useState<IDatePickerContext>({
       open: false,
@@ -73,11 +72,10 @@ const CreateEvent = ({navigation}) => {
       key,
       name,
       type,
-      date,
       endTime,
       startTime,
-      attachment,
       description,
+      date: date.selected,
     };
     const updatedEvents = [...events, event];
     setToStorage('events', updatedEvents).then(isSet => {

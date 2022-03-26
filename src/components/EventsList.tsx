@@ -1,14 +1,23 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {FlatList, Heading, Center} from 'native-base';
 import EventItem from './EventItem';
+import {EventsContext} from '../common/userContext';
 
 const EventsList = ({events, filter}) => {
+  const {events: allEvents, setEvents} = useContext(EventsContext);
   return events.length > 0 ? (
     <FlatList
       p={4}
       data={events}
       keyExtractor={({key}) => key}
-      renderItem={EventItem}
+      renderItem={({item, index}) => (
+        <EventItem
+          allEvents={allEvents}
+          setEvents={setEvents}
+          index={index}
+          item={item}
+        />
+      )}
       showsHorizontalScrollIndicator={false}
     />
   ) : (
