@@ -12,6 +12,7 @@ target 'eventsList' do
     :hermes_enabled => false
   )
 
+
   target 'eventsListTests' do
     inherit! :complete
     # Pods for testing
