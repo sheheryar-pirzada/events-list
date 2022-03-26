@@ -1,7 +1,19 @@
-import React, {useState} from 'react';
-import {Box, Button, HStack, Input, TextArea, VStack} from 'native-base';
+import React, {useContext, useState} from 'react';
+import {
+  Box,
+  Button,
+  HStack,
+  Input,
+  Select,
+  TextArea,
+  VStack,
+} from 'native-base';
 import DatePicker from 'react-native-date-picker';
 import Header from '../../components/Header';
+import {setToStorage} from '../../common/storage';
+import {routes} from '../../navigation/utils';
+import {EventsContext} from '../../common/userContext';
+import { parseDate, parseTime } from '../../common/utils';
 
 interface IDatePickerContext {
   open: boolean;
@@ -9,9 +21,11 @@ interface IDatePickerContext {
   form: string;
 }
 
-const CreateEvent = () => {
+const CreateEvent = ({navigation}) => {
+  const {events, setEvents} = useContext(EventsContext);
   const [name, setName] = useState<string>('');
   const [description, setDescription] = useState<string>('');
+  const [type, setType] = useState<string>('');
   const [date, setDate] = useState({selected: new Date(), show: false});
   const [startTime, setStartTime] = useState<null | Date>(null);
   const [endTime, setEndTime] = useState<null | Date>(null);
@@ -23,13 +37,6 @@ const CreateEvent = () => {
       form: 'date',
     });
 
-  const parseDate = date => date.toISOString().split('T')[0];
-  const parseTime = time =>
-    time.toLocaleString('en-US', {
-      hour: 'numeric',
-      minute: 'numeric',
-      hour12: true,
-    });
   const handleDateConfirm = date => {
     switch (datePickerContext.form) {
       case 'date':
@@ -53,15 +60,34 @@ const CreateEvent = () => {
     variant: 'outline',
     borderColor: 'trueGray.300',
     _text: {color: 'trueGray.300'},
+    backgroundColor: 'transparent',
   };
 
-  const isDisabled = [
-    name,
-    description,
-    date.selected,
-    startTime,
-    endTime,
-  ].some(item => !item);
+  const isDisabled = [name, date.selected, startTime, endTime, type].some(
+    item => !item,
+  );
+
+  const handleCreateEvent = () => {
+    const key = new Date().valueOf().toString();
+    const event = {
+      key,
+      name,
+      type,
+      date,
+      endTime,
+      startTime,
+      attachment,
+      description,
+    };
+    const updatedEvents = [...events, event];
+    setToStorage('events', updatedEvents).then(isSet => {
+      if (isSet) {
+        console.log('Event Set');
+        setEvents(updatedEvents);
+        navigation.navigate(routes.tabs.eventsList);
+      }
+    });
+  };
 
   return (
     <Box safeArea>
@@ -80,6 +106,30 @@ const CreateEvent = () => {
           placeholder="Description"
           onChangeText={val => setDescription(val)}
         />
+        <Select
+          borderRadius={12}
+          h={50}
+          p={4}
+          fontSize="md"
+          selectedValue={type}
+          _actionSheetContent={{
+            backgroundColor: 'gray.900',
+          }}
+          placeholder="Event type"
+          _item={{
+            p: 4,
+            _text: {color: 'gray.100'},
+            backgroundColor: 'transparent',
+          }}
+          _selectedItem={{
+            bg: 'gray.300',
+            _text: {color: 'gray.900'},
+          }}
+          onValueChange={type => setType(type)}>
+          <Select.Item label="Event" value="event" />
+          <Select.Item label="Out of office" value="Out of office" />
+          <Select.Item label="Task" value="Task" />
+        </Select>
         <Button
           {...outlineButtonProps}
           onPress={() =>
@@ -105,7 +155,9 @@ const CreateEvent = () => {
             {endTime ? parseTime(endTime) : 'End Time'}
           </Button>
         </HStack>
-        <Button isDisabled={isDisabled}>Create Event</Button>
+        <Button isDisabled={isDisabled} onPress={handleCreateEvent}>
+          Create Event
+        </Button>
       </VStack>
       <DatePicker
         mode={datePickerContext.type}

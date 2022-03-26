@@ -32,6 +32,7 @@ const BottomTabs = () => {
   const {
     tabs: {eventsList, calendarView},
   } = routes;
+
   return (
     <Tab.Navigator screenOptions={screenOptions}>
       <Tab.Screen

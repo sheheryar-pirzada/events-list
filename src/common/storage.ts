@@ -14,7 +14,7 @@ export const setToStorage = async (
   }
 };
 
-export const getFromstorage = async (key: string): Promise<null | object> => {
+export const getFromStorage = async (key: string): Promise<null | object | Array<object>> => {
   try {
     const strData = await AsyncStorage.getItem(key);
     return strData !== null ? JSON.parse(strData) : null;
