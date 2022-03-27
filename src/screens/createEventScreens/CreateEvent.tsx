@@ -7,6 +7,7 @@ import {
   KeyboardAvoidingView,
   Select,
   TextArea,
+  useToast,
   VStack,
 } from 'native-base';
 import DatePicker from 'react-native-date-picker';
@@ -35,6 +36,7 @@ const CreateEvent: React.FC<CreateEventProps> = ({navigation, route}) => {
   const {events, setEvents} = useContext(EventsContext);
   const {eventToEdit} = route.params;
   const isEdit = !!eventToEdit ?? false;
+  const toast = useToast();
   const nameRef = useRef(null);
   const desRef = useRef(null);
   const [name, setName] = useState<string>(eventToEdit?.name ?? '');
@@ -83,6 +85,22 @@ const CreateEvent: React.FC<CreateEventProps> = ({navigation, route}) => {
     item => !item,
   );
 
+  const doesEventExist = (): boolean => {
+    const matchedIndex = events.findIndex(
+      ev =>
+        moment(ev.date).format('YYYY-DD-MM') ===
+        moment(date.selected).format('YYYY-DD-MM'),
+    );
+    if (matchedIndex !== -1) {
+      const matchedEvent = events[matchedIndex];
+      return moment(startTime).isBetween(
+        matchedEvent.startTime,
+        matchedEvent.endTime,
+      );
+    }
+    return false;
+  };
+
   const handleCreateEvent = () => {
     const key = new Date().valueOf().toString();
     const event = {
@@ -95,22 +113,31 @@ const CreateEvent: React.FC<CreateEventProps> = ({navigation, route}) => {
       date: date.selected,
     };
     let updatedEvents = [...events];
-    if (isEdit) {
-      const updateIndex = events?.findIndex(
-        item => item.key === eventToEdit?.key,
-      );
-      updateIndex !== -1 && (updatedEvents[updateIndex] = event);
+    if (doesEventExist()) {
+      toast.show({
+        title: 'Error creating event',
+        description: 'You already have an event scheduled at this time',
+        placement: 'bottom',
+        status: 'error',
+      });
     } else {
-      updatedEvents.push(event);
-    }
-    setToStorage('events', updatedEvents).then(isSet => {
-      if (isSet) {
-        setEvents(updatedEvents);
-        navigation.goBack();
+      if (isEdit) {
+        const updateIndex = events?.findIndex(
+          item => item.key === eventToEdit?.key,
+        );
+        updateIndex !== -1 && (updatedEvents[updateIndex] = event);
+      } else {
+        updatedEvents.push(event);
       }
-    });
-    const nTime = moment(startTime).subtract(10, 'minutes').toDate();
-    Notifications.scheduleNotification(nTime, name, description);
+      setToStorage('events', updatedEvents).then(isSet => {
+        if (isSet) {
+          setEvents(updatedEvents);
+          navigation.goBack();
+        }
+      });
+      const nTime = moment(startTime).subtract(10, 'minutes').toDate();
+      Notifications.scheduleNotification(nTime, name, description);
+    }
   };
 
   const getDatePickerDate = (): string | Date => {
