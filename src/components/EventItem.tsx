@@ -16,6 +16,7 @@ type EventItemProps = {
   allEvents: Array<Event>;
   setEvents: Function;
   filterApplied: boolean;
+  setEventToDelete: Function,
 };
 
 const EventItem: React.FC<EventItemProps> = ({
@@ -24,6 +25,7 @@ const EventItem: React.FC<EventItemProps> = ({
   allEvents,
   setEvents,
   filterApplied,
+  setEventToDelete,
 }) => {
   const navigation = useNavigation();
   const {name, description, startTime, endTime, date} = event;
@@ -69,7 +71,7 @@ const EventItem: React.FC<EventItemProps> = ({
         borderRadius={12}
         alignItems="center"
         justifyContent="center"
-        onPress={() => handleDeleteEvent()}>
+        onPress={() => setEventToDelete(event.key)}>
         <Text fontWeight="bold" color="gray.300">
           Delete
         </Text>
