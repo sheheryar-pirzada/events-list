@@ -6,8 +6,12 @@ import moment from 'moment';
 import {EventsContext} from '../../common/userContext';
 import EventsList from '../../components/EventsList';
 import {routes} from '../../navigation/utils';
+import {BottomTabsParamsList} from '../../types/types';
+import {BottomTabScreenProps} from '@react-navigation/bottom-tabs';
 
-const CalendarView = ({navigation}) => {
+type CalendarViewProps = BottomTabScreenProps<BottomTabsParamsList, 'Calendar'>;
+
+const CalendarView: React.FC<CalendarViewProps> = ({navigation}) => {
   const {events} = useContext(EventsContext);
 
   const getMarkedDates = () => {
@@ -63,7 +67,7 @@ const CalendarView = ({navigation}) => {
   };
 
   return (
-    <Box safeArea>
+    <Box safeArea flex={1}>
       <Header title="My Calendar View" />
       <Center my={2}>
         <Button

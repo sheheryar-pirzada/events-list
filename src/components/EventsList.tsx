@@ -40,6 +40,7 @@ const EventsList: React.FC<EventsListProps> = ({
         />
       )}
       showsHorizontalScrollIndicator={false}
+      contentContainerStyle={{paddingBottom: 20}}
     />
   ) : (
     <Center h={calendarView ? '40%' : '80%'} display="flex" px={4}>

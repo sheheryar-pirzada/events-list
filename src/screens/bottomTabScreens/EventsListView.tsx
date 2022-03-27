@@ -4,36 +4,26 @@ import Header from '../../components/Header';
 import {routes} from '../../navigation/utils';
 import {EventsContext} from '../../common/userContext';
 import EventsList from '../../components/EventsList';
-import {combineDateAndStartTime, eventTypes} from '../../common/utils';
+import {eventTypes} from '../../common/utils';
+import {selectProps} from '../../common/theme';
+import {BottomTabScreenProps} from '@react-navigation/bottom-tabs';
+import {BottomTabsParamsList} from '../../types/types';
 
-const EventsListView = ({navigation}) => {
+type EventsListViewProps = BottomTabScreenProps<BottomTabsParamsList, 'Events'>;
+
+const EventsListView: React.FC<EventsListViewProps> = ({navigation}) => {
   const {events} = useContext(EventsContext);
   const [filter, setFilter] = useState('');
   return (
-    <Box safeArea>
+    <Box safeArea flex={1}>
       <Header title="My Events Listing" />
       <HStack display="flex" justifyContent="center" space={4} p={4}>
         <Box w="48%">
           <Select
-            borderRadius={12}
-            h={50}
-            p={4}
-            fontSize="md"
+            {...selectProps}
             selectedValue={filter}
             onValueChange={type => setFilter(type)}
-            _actionSheetContent={{
-              backgroundColor: 'gray.900',
-            }}
-            placeholder="Event type"
-            _item={{
-              p: 4,
-              _text: {color: 'gray.100'},
-              backgroundColor: 'transparent',
-            }}
-            _selectedItem={{
-              bg: 'gray.300',
-              _text: {color: 'gray.900'},
-            }}>
+            placeholder="Event type">
             <Select.Item label="All" value="" key="all" />
             {eventTypes.map(eventType => (
               <Select.Item

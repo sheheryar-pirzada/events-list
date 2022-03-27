@@ -5,7 +5,7 @@ export const theme = extendTheme({
     Input: {
       baseStyle: {
         rounded: 'xl',
-        color: 'trueGray.200',
+        color: 'trueGray.400',
         _focus: {borderColor: 'white'},
         h: 50,
       },
@@ -13,7 +13,7 @@ export const theme = extendTheme({
     Select: {
       baseStyle: {
         rounded: 'xl',
-        color: 'trueGray.200',
+        color: 'trueGray.400',
         _focus: {borderColor: 'white'},
         h: 50,
       },
@@ -29,3 +29,29 @@ export const theme = extendTheme({
     },
   },
 });
+
+export const selectProps = {
+  h: 50,
+  p: 4,
+  borderRadius: 12,
+  fontSize: 'md',
+  _actionSheetContent: {
+    backgroundColor: 'gray.900',
+  },
+  _item: {
+    p: 4,
+    _text: {color: 'gray.100'},
+    backgroundColor: 'transparent',
+  },
+  _selectedItem: {
+    bg: 'gray.300',
+    _text: {color: 'gray.900'},
+  },
+};
+
+export const outlineButtonProps = {
+  variant: 'outline',
+  borderColor: 'trueGray.300',
+  _text: {color: 'trueGray.300'},
+  backgroundColor: 'transparent',
+};

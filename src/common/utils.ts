@@ -1,12 +1,5 @@
 import moment from 'moment';
 
-export const combineDateAndStartTime = (date, startTime) => {
-  if (date && startTime) {
-    return new Date(`${date.split('T')[0]}T${startTime.split('T')[1]}`);
-  }
-  return new Date();
-};
-
 export const isDateToday = date => {
   const otherDate = new Date(date);
   const todayDate = new Date();

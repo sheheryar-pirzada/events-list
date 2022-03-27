@@ -36,6 +36,7 @@
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = eventsList/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = eventsList/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = eventsList/main.m; sourceTree = "<group>"; };
+		14FBE1E427F03E1700F5974B /* eventsList.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = eventsList.entitlements; path = eventsList/eventsList.entitlements; sourceTree = "<group>"; };
 		1CFF7F4907FCD3C61F8806F6 /* libPods-eventsList.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-eventsList.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5E1AEAA0BCD89FE9F0741832 /* Pods-eventsList.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-eventsList.debug.xcconfig"; path = "Target Support Files/Pods-eventsList/Pods-eventsList.debug.xcconfig"; sourceTree = "<group>"; };
 		61D2EAF8C2787FC39995BE7C /* Pods-eventsList-eventsListTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-eventsList-eventsListTests.debug.xcconfig"; path = "Target Support Files/Pods-eventsList-eventsListTests/Pods-eventsList-eventsListTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -86,6 +87,7 @@
 		13B07FAE1A68108700A75B9A /* eventsList */ = {
 			isa = PBXGroup;
 			children = (
+				14FBE1E427F03E1700F5974B /* eventsList.entitlements */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
@@ -129,7 +131,6 @@
 			children = (
 			);
 			name = Resources;
-			path = "";
 			sourceTree = "<group>";
 		};
 		83CBB9F61A601CBA00E9B192 = {
@@ -492,6 +493,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = eventsList/eventsList.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = eventsList/Info.plist;
@@ -518,6 +520,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = eventsList/eventsList.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				INFOPLIST_FILE = eventsList/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (

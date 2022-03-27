@@ -18,3 +18,8 @@ export type RootStackParamList = {
   'Main': undefined;
   'Create Event': { eventToEdit?: Event};
 };
+
+export type BottomTabsParamsList = {
+  'Events': undefined;
+  'Calendar': undefined;
+};

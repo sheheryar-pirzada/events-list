@@ -1,9 +1,11 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useRef, useState} from 'react';
 import {
   Box,
   Button,
   HStack,
+  IInputProps,
   Input,
+  KeyboardAvoidingView,
   Select,
   TextArea,
   VStack,
@@ -20,6 +22,10 @@ import {
 } from '../../common/utils';
 import {DatePickerContext, RootStackParamList} from '../../types/types';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import Notifications from '../../common/Notifications';
+import moment from 'moment';
+import {outlineButtonProps, selectProps} from '../../common/theme';
+import {Platform} from 'react-native';
 
 type CreateEventProps = NativeStackScreenProps<
   RootStackParamList,
@@ -30,6 +36,8 @@ const CreateEvent: React.FC<CreateEventProps> = ({navigation, route}) => {
   const {events, setEvents} = useContext(EventsContext);
   const {eventToEdit} = route.params;
   const isEdit = !!eventToEdit ?? false;
+  const nameRef = useRef(null);
+  const desRef = useRef(null);
   const [name, setName] = useState<string>(eventToEdit?.name ?? '');
   const [description, setDescription] = useState<string>(
     eventToEdit?.description ?? '',
@@ -53,7 +61,7 @@ const CreateEvent: React.FC<CreateEventProps> = ({navigation, route}) => {
     },
   );
 
-  const handleDateConfirm = date => {
+  const handleDateConfirm = (date: Date) => {
     switch (datePickerContext.form) {
       case 'date':
         setDate({selected: date, show: true});
@@ -70,13 +78,6 @@ const CreateEvent: React.FC<CreateEventProps> = ({navigation, route}) => {
 
   const handleDateCancel = () => {
     setDatePickerContext({open: false, type: 'date', form: 'date'});
-  };
-
-  const outlineButtonProps = {
-    variant: 'outline',
-    borderColor: 'trueGray.300',
-    _text: {color: 'trueGray.300'},
-    backgroundColor: 'transparent',
   };
 
   const isDisabled = [name, date.selected, startTime, endTime, type].some(
@@ -99,17 +100,18 @@ const CreateEvent: React.FC<CreateEventProps> = ({navigation, route}) => {
       const updateIndex = events?.findIndex(
         item => item.key === eventToEdit?.key,
       );
-      updateIndex && (updatedEvents[updateIndex] = event);
+      updateIndex !== -1 && (updatedEvents[updateIndex] = event);
     } else {
       updatedEvents.push(event);
     }
     setToStorage('events', updatedEvents).then(isSet => {
       if (isSet) {
-        console.log('Event Set');
         setEvents(updatedEvents);
         navigation.goBack();
       }
     });
+    const nTime = moment(startTime).subtract(10, 'minutes');
+    Notifications.scheduleNotification(nTime, name, description);
   };
 
   const getDatePickerDate = (): string | Date => {
@@ -134,91 +136,91 @@ const CreateEvent: React.FC<CreateEventProps> = ({navigation, route}) => {
 
   return (
     <Box safeArea>
-      <Header title="New Event" />
-      <VStack px={6} mt={8} space={6}>
-        <Input
-          p={4}
-          fontSize="md"
-          placeholder="Name"
-          value={name}
-          onChangeText={val => setName(val)}
-        />
-        <TextArea
-          p={4}
-          h={40}
-          value={description}
-          fontSize="md"
-          placeholder="Description"
-          onChangeText={val => setDescription(val)}
-        />
-        <Select
-          borderRadius={12}
-          h={50}
-          p={4}
-          fontSize="md"
-          selectedValue={type}
-          _actionSheetContent={{
-            backgroundColor: 'gray.900',
-          }}
-          placeholder="Event type"
-          _item={{
-            p: 4,
-            _text: {color: 'gray.100'},
-            backgroundColor: 'transparent',
-          }}
-          _selectedItem={{
-            bg: 'gray.300',
-            _text: {color: 'gray.900'},
-          }}
-          onValueChange={type => setType(type)}>
-          {eventTypes.map(eventType => (
-            <Select.Item key={eventType} label={eventType} value={eventType} />
-          ))}
-        </Select>
-        <Button
-          {...outlineButtonProps}
-          onPress={() =>
-            setDatePickerContext({open: true, type: 'date', form: 'date'})
-          }>
-          {date.show ? parseDateMoment(date.selected) : 'Select a Date'}
-        </Button>
-        <HStack display="flex" justifyContent="space-between">
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+        <Header title="New Event" />
+        <VStack px={6} mt={8} space={6}>
+          <Input
+            p={4}
+            ref={nameRef}
+            returnKeyType="next"
+            blurOnSubmit={false}
+            selectTextOnFocus={false}
+            onSubmitEditing={() => desRef?.current?.focus()}
+            value={name}
+            fontSize="md"
+            placeholder="Name"
+            onChangeText={val => setName(val)}
+          />
+          <TextArea
+            p={4}
+            h={40}
+            ref={desRef}
+            returnKeyType="done"
+            selectTextOnFocus={false}
+            fontSize="md"
+            value={description}
+            placeholder="Description"
+            onChangeText={val => setDescription(val)}
+          />
+          <Select
+            {...selectProps}
+            selectedValue={type}
+            placeholder="Event type"
+            onValueChange={type => setType(type)}>
+            {eventTypes.map(eventType => (
+              <Select.Item
+                key={eventType}
+                label={eventType}
+                value={eventType}
+              />
+            ))}
+          </Select>
           <Button
             {...outlineButtonProps}
-            w="48%"
             onPress={() =>
-              setDatePickerContext({open: true, type: 'time', form: 'start'})
+              setDatePickerContext({open: true, type: 'date', form: 'date'})
             }>
-            {startTime ? parseTimeMoment(startTime) : 'Start Time'}
+            {date.show ? parseDateMoment(date.selected) : 'Select a Date'}
           </Button>
+          <HStack display="flex" justifyContent="space-between">
+            <Button
+              {...outlineButtonProps}
+              w="48%"
+              onPress={() =>
+                setDatePickerContext({open: true, type: 'time', form: 'start'})
+              }>
+              {startTime ? parseTimeMoment(startTime) : 'Start Time'}
+            </Button>
+            <Button
+              {...outlineButtonProps}
+              w="48%"
+              onPress={() =>
+                setDatePickerContext({open: true, type: 'time', form: 'end'})
+              }>
+              {endTime ? parseTimeMoment(endTime) : 'End Time'}
+            </Button>
+          </HStack>
           <Button
-            {...outlineButtonProps}
-            w="48%"
-            onPress={() =>
-              setDatePickerContext({open: true, type: 'time', form: 'end'})
-            }>
-            {endTime ? parseTimeMoment(endTime) : 'End Time'}
+            variant="outline"
+            bg="gray.800"
+            borderWidth={0}
+            _text={{color: 'gray.300'}}
+            onPress={() => navigation.goBack()}>
+            Cancel
           </Button>
-        </HStack>
-        <Button
-          variant="outline"
-          bg="gray.800"
-          borderWidth={0}
-          _text={{color: 'gray.300'}}
-          onPress={() => navigation.goBack()}>
-          Cancel
-        </Button>
-        <Button isDisabled={isDisabled} onPress={handleCreateEvent}>
-          {isEdit ? 'Update Event' : 'Create Event'}
-        </Button>
-      </VStack>
+          <Button isDisabled={isDisabled} onPress={handleCreateEvent}>
+            {isEdit ? 'Update Event' : 'Create Event'}
+          </Button>
+        </VStack>
+      </KeyboardAvoidingView>
       <DatePicker
-        mode={datePickerContext.type}
         modal={true}
-        open={datePickerContext.open}
-        date={new Date(getDatePickerDate())}
-        onConfirm={handleDateConfirm}
         onCancel={handleDateCancel}
+        mode={datePickerContext.type}
+        open={datePickerContext.open}
+        onConfirm={handleDateConfirm}
+        date={new Date(getDatePickerDate())}
         minimumDate={
           isDateToday(date.selected)
             ? new Date()

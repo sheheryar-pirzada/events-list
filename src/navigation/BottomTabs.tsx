@@ -1,12 +1,13 @@
 import React from 'react';
 import {Text} from 'native-base';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import type {BottomTabNavigationOptions} from '@react-navigation/bottom-tabs';
 import CalendarView from '../screens/bottomTabScreens/CalendarView';
 import EventsListView from '../screens/bottomTabScreens/EventsListView';
 import {routes} from './utils';
 
 const Tab = createBottomTabNavigator();
-const screenOptions = ({route}) => ({
+const screenOptions: BottomTabNavigationOptions | any = ({route}) => ({
   tabBarStyle: {
     padding: '4%',
     height: '10%',

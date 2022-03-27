@@ -1,5 +1,4 @@
-import React, {useEffect, useState, createContext} from 'react';
-import type {ReactNode} from 'react';
+import React, {useEffect, useState} from 'react';
 import {NativeBaseProvider} from 'native-base';
 import RootStack from './src/navigation/RootStack';
 import {NavigationContainer, DarkTheme} from '@react-navigation/native';
@@ -10,7 +9,7 @@ import {EventsContext} from './src/common/userContext';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {StatusBar} from 'react-native';
 
-const App: () => ReactNode = () => {
+const App: React.FC = () => {
   const [events, setEvents] = useState<any>([]);
   useEffect(() => {
     StatusBar.setHidden(true);
