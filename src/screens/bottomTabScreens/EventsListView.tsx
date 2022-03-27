@@ -4,7 +4,7 @@ import Header from '../../components/Header';
 import {routes} from '../../navigation/utils';
 import {EventsContext} from '../../common/userContext';
 import EventsList from '../../components/EventsList';
-import {combineDateAndStartTime} from '../../common/utils';
+import {combineDateAndStartTime, eventTypes} from '../../common/utils';
 
 const EventsListView = ({navigation}) => {
   const {events} = useContext(EventsContext);
@@ -34,10 +34,14 @@ const EventsListView = ({navigation}) => {
               bg: 'gray.300',
               _text: {color: 'gray.900'},
             }}>
-            <Select.Item label="All" value="" />
-            <Select.Item label="Event" value="event" />
-            <Select.Item label="Out of office" value="Out of office" />
-            <Select.Item label="Task" value="Task" />
+            <Select.Item label="All" value="" key="all" />
+            {eventTypes.map(eventType => (
+              <Select.Item
+                key={eventType}
+                label={eventType}
+                value={eventType}
+              />
+            ))}
           </Select>
         </Box>
         <Button
@@ -55,8 +59,7 @@ const EventsListView = ({navigation}) => {
           .filter(event => filter === '' || event.type === filter)
           .sort(
             (a, b) =>
-              combineDateAndStartTime(a.date, a.startTime).getTime() -
-              combineDateAndStartTime(b.date, b.startTime).getTime(),
+              new Date(a.startTime).getTime() - new Date(b.startTime).getTime(),
           )}
       />
     </Box>

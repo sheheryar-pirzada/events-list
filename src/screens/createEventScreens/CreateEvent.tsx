@@ -11,20 +11,24 @@ import {
 import DatePicker from 'react-native-date-picker';
 import Header from '../../components/Header';
 import {setToStorage} from '../../common/storage';
-import {routes} from '../../navigation/utils';
 import {EventsContext} from '../../common/userContext';
-import {formatDate, parseDate, parseTime} from '../../common/utils';
+import {
+  eventTypes,
+  isDateToday,
+  parseDateMoment,
+  parseTimeMoment,
+} from '../../common/utils';
+import {DatePickerContext, RootStackParamList} from '../../types/types';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
 
-interface IDatePickerContext {
-  open: boolean;
-  type: 'date' | 'datetime' | 'time';
-  form: string;
-}
+type CreateEventProps = NativeStackScreenProps<
+  RootStackParamList,
+  'Create Event'
+>;
 
-const CreateEvent = ({navigation, route}) => {
+const CreateEvent: React.FC<CreateEventProps> = ({navigation, route}) => {
   const {events, setEvents} = useContext(EventsContext);
   const {eventToEdit} = route.params;
-  console.log(eventToEdit);
   const isEdit = !!eventToEdit ?? false;
   const [name, setName] = useState<string>(eventToEdit?.name ?? '');
   const [description, setDescription] = useState<string>(
@@ -41,12 +45,13 @@ const CreateEvent = ({navigation, route}) => {
   const [endTime, setEndTime] = useState<null | Date>(
     eventToEdit?.endTime ?? null,
   );
-  const [datePickerContext, setDatePickerContext] =
-    useState<IDatePickerContext>({
+  const [datePickerContext, setDatePickerContext] = useState<DatePickerContext>(
+    {
       open: false,
       type: 'date',
       form: 'date',
-    });
+    },
+  );
 
   const handleDateConfirm = date => {
     switch (datePickerContext.form) {
@@ -91,10 +96,10 @@ const CreateEvent = ({navigation, route}) => {
     };
     let updatedEvents = [...events];
     if (isEdit) {
-      const updateIndex = events.findIndex(
-        item => item.key === eventToEdit.key,
+      const updateIndex = events?.findIndex(
+        item => item.key === eventToEdit?.key,
       );
-      updatedEvents[updateIndex] = event;
+      updateIndex && (updatedEvents[updateIndex] = event);
     } else {
       updatedEvents.push(event);
     }
@@ -102,20 +107,28 @@ const CreateEvent = ({navigation, route}) => {
       if (isSet) {
         console.log('Event Set');
         setEvents(updatedEvents);
-        navigation.navigate(routes.tabs.eventsList);
+        navigation.goBack();
       }
     });
   };
 
-  const getDatePickerDate = () => {
+  const getDatePickerDate = (): string | Date => {
     switch (datePickerContext.form) {
       case 'date':
         return date.selected;
       case 'start':
         return startTime;
-        break;
       case 'end':
         return endTime;
+    }
+    return '';
+  };
+
+  const getMinDate = (): Date => {
+    if (isDateToday(date.selected)) {
+      return new Date(date.selected);
+    } else {
+      return new Date(new Date().toDateString().split('T')[0]);
     }
   };
 
@@ -158,16 +171,16 @@ const CreateEvent = ({navigation, route}) => {
             _text: {color: 'gray.900'},
           }}
           onValueChange={type => setType(type)}>
-          <Select.Item label="Event" value="event" />
-          <Select.Item label="Out of office" value="Out of office" />
-          <Select.Item label="Task" value="Task" />
+          {eventTypes.map(eventType => (
+            <Select.Item key={eventType} label={eventType} value={eventType} />
+          ))}
         </Select>
         <Button
           {...outlineButtonProps}
           onPress={() =>
             setDatePickerContext({open: true, type: 'date', form: 'date'})
           }>
-          {date.show ? formatDate(new Date(date.selected)) : 'Select a Date'}
+          {date.show ? parseDateMoment(date.selected) : 'Select a Date'}
         </Button>
         <HStack display="flex" justifyContent="space-between">
           <Button
@@ -176,7 +189,7 @@ const CreateEvent = ({navigation, route}) => {
             onPress={() =>
               setDatePickerContext({open: true, type: 'time', form: 'start'})
             }>
-            {startTime ? parseTime(new Date(startTime)) : 'Start Time'}
+            {startTime ? parseTimeMoment(startTime) : 'Start Time'}
           </Button>
           <Button
             {...outlineButtonProps}
@@ -184,7 +197,7 @@ const CreateEvent = ({navigation, route}) => {
             onPress={() =>
               setDatePickerContext({open: true, type: 'time', form: 'end'})
             }>
-            {endTime ? parseTime(new Date(endTime)) : 'End Time'}
+            {endTime ? parseTimeMoment(endTime) : 'End Time'}
           </Button>
         </HStack>
         <Button
@@ -206,7 +219,11 @@ const CreateEvent = ({navigation, route}) => {
         date={new Date(getDatePickerDate())}
         onConfirm={handleDateConfirm}
         onCancel={handleDateCancel}
-        minimumDate={new Date()}
+        minimumDate={
+          isDateToday(date.selected)
+            ? new Date()
+            : new Date(new Date().toDateString().split('T')[0])
+        }
       />
     </Box>
   );

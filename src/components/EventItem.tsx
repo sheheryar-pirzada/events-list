@@ -1,20 +1,24 @@
 import React from 'react';
+import {Box, Heading, HStack, Pressable, Text, VStack} from 'native-base';
 import {
-  Box,
-  Center,
-  Heading,
-  HStack,
-  Pressable,
-  Text,
-  VStack,
-} from 'native-base';
-import {formatDate, parseTime} from '../common/utils';
+  parseDateMoment,
+  parseTimeMoment,
+} from '../common/utils';
 import {Swipeable} from 'react-native-gesture-handler';
 import {setToStorage} from '../common/storage';
 import {useNavigation} from '@react-navigation/native';
 import {routes} from '../navigation/utils';
+import {Event} from '../types/types';
 
-const EventItem = ({
+type EventItemProps = {
+  item: Event;
+  index: number;
+  allEvents: Array<Event>;
+  setEvents: Function;
+  filterApplied: boolean;
+};
+
+const EventItem: React.FC<EventItemProps> = ({
   item: event,
   index,
   allEvents,
@@ -31,9 +35,9 @@ const EventItem = ({
     startTime: Date,
     endTime: Date,
   ): string => {
-    return `${formatDate(new Date(date))} from ${parseTime(
-      new Date(startTime),
-    )} - ${parseTime(new Date(endTime))}`;
+    return `${parseDateMoment(date)} (${parseTimeMoment(
+      startTime,
+    )} - ${parseTimeMoment(endTime)})`;
   };
 
   const closeRow = indexNo => {

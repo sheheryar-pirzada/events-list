@@ -1,9 +1,8 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import CreateEvent from '../screens/createEventScreens/CreateEvent';
 import BottomTabs from './BottomTabs';
 import {routes} from './utils';
-import {getFromStorage} from '../common/storage';
 
 const Stack = createNativeStackNavigator();
 

@@ -8,9 +8,14 @@ import {theme} from './src/common/theme';
 import {getFromStorage} from './src/common/storage';
 import {EventsContext} from './src/common/userContext';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import {StatusBar} from 'react-native';
 
 const App: () => ReactNode = () => {
   const [events, setEvents] = useState<any>([]);
+  useEffect(() => {
+    StatusBar.setHidden(true);
+  }, []);
+
   useEffect(() => {
     getFromStorage('events').then(data => {
       if (data) {

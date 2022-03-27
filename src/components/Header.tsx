@@ -1,11 +1,11 @@
-import React, {ReactElement, ReactNode} from 'react';
+import React from 'react';
 import {Center, Heading} from 'native-base';
 
 type HeaderProps = {
   title: string;
 };
 
-const Header = ({title}: HeaderProps) => {
+const Header: React.FC<HeaderProps> = ({title}) => {
   return (
     <Center>
       <Heading color="trueGray.300" fontWeight="light" letterSpacing={1}>
