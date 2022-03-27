@@ -37,14 +37,13 @@ class Notifications {
       channelId: 'events',
       title: 'You have an upcoming event',
       message,
-      date: new Date(date),
+      date,
       bigText: sub,
       subtitle: sub,
     });
   }
 
   createNotificationChannel() {
-    console.log('here');
     PushNotification.createChannel(
       {
         channelId: 'events', // (required)

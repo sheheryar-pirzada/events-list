@@ -20,7 +20,6 @@ const EventsListView: React.FC<EventsListViewProps> = ({navigation}) => {
       date.toString().split('T')[0] + 'T' + startTime.toString().split('T')[1],
     ).unix();
   };
-  console.log(moment('2022-05-19' + 'T' + '19:00:00.000Z').unix());
   return (
     <Box safeArea flex={1}>
       <Header title="My Events Listing" />

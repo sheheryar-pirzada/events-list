@@ -3,7 +3,6 @@ import {
   Box,
   Button,
   HStack,
-  IInputProps,
   Input,
   KeyboardAvoidingView,
   Select,
@@ -110,7 +109,7 @@ const CreateEvent: React.FC<CreateEventProps> = ({navigation, route}) => {
         navigation.goBack();
       }
     });
-    const nTime = moment(startTime).subtract(10, 'minutes');
+    const nTime = moment(startTime).subtract(10, 'minutes').toDate();
     Notifications.scheduleNotification(nTime, name, description);
   };
 
