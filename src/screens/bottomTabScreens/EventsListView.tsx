@@ -8,12 +8,19 @@ import {eventTypes} from '../../common/utils';
 import {selectProps} from '../../common/theme';
 import {BottomTabScreenProps} from '@react-navigation/bottom-tabs';
 import {BottomTabsParamsList} from '../../types/types';
+import moment from 'moment';
 
 type EventsListViewProps = BottomTabScreenProps<BottomTabsParamsList, 'Events'>;
 
 const EventsListView: React.FC<EventsListViewProps> = ({navigation}) => {
   const {events} = useContext(EventsContext);
   const [filter, setFilter] = useState('');
+  const combineDateAndStartTime = (date, startTime) => {
+    return moment(
+      date.toString().split('T')[0] + 'T' + startTime.toString().split('T')[1],
+    ).unix();
+  };
+  console.log(moment('2022-05-19' + 'T' + '19:00:00.000Z').unix());
   return (
     <Box safeArea flex={1}>
       <Header title="My Events Listing" />
@@ -49,7 +56,8 @@ const EventsListView: React.FC<EventsListViewProps> = ({navigation}) => {
           .filter(event => filter === '' || event.type === filter)
           .sort(
             (a, b) =>
-              new Date(a.startTime).getTime() - new Date(b.startTime).getTime(),
+              combineDateAndStartTime(a.date, a.startTime) -
+              combineDateAndStartTime(b.date, b.startTime),
           )}
       />
     </Box>
